@@ -1,0 +1,28 @@
+/*
+Description: Simple Theme
+Author: Emanuele Sorce
+Author URI: https://github.com/tronfortytwo
+*/
+@import url("style.css");
+
+
+html {
+	background: url("pass.jpg") no-repeat center center fixed; 
+    background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+}
+
+h1 {
+	color: white;
+}
+
+input
+{
+	font-size: 5vw;
+	height: 110vw;
+	background-color: rgba(255,0,0,0);
+	border: none;
+	color: red;
+}

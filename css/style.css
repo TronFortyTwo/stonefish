@@ -1,0 +1,49 @@
+/*
+Description: Simple Theme 
+Author: Emanuele Sorce
+Author URI: https://github.com/tronfortytwo
+*/
+
+h1 {
+    font-size: 6.6vw;
+}
+h2 {
+	font-size: 4.95vw;
+}
+h3 {
+	font-size: 3.861vw;
+}
+h4 {
+	font-size: 3.3vw;
+}
+h5 {
+	font-size: 2.706vw;
+}
+h6 {
+	font-size: 2.211vw;
+}
+
+p {
+	font-size: 3.3vw;
+}
+
+b {
+	margin-right: 0vw;
+	margin-left: 0vw;
+}
+
+a {
+	margin-right: 0vw;
+	margin-left: 0vw;
+}
+
+font {
+	margin-right: 0vw;
+	margin-left: 0vw;
+}
+
+input {
+    width: 80vw;
+	height: 7.5vw;
+	font-size: 3.861vw;
+}

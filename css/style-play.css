@@ -1,0 +1,16 @@
+/*
+Description: Simple Theme
+Author: Emanuele Sorce
+Author URI: https://github.com/tronfortytwo
+*/
+@import url("style.css");
+
+html {
+	background-color: rgba(210,210,210,255);
+}
+
+input[type=button]
+{
+	background-color: rgba(230,230,230,8);
+	height: 12vw;
+}

@@ -306,7 +306,7 @@ function playLoaded()
 					sessionStorage.setItem("count", count);
 					
 					// give the fish more points!
-					let points = Number(sessionStorage.getItem("score"+fish)) + ((10/player_num) * Number(sessionStorage.getItem("count")));
+					let points = Number(sessionStorage.getItem("score"+fish)) + ((9/player_num) * Number(sessionStorage.getItem("count")));
 					sessionStorage.setItem("score"+fish, points);
 					
 					// remove that player
@@ -316,9 +316,6 @@ function playLoaded()
 					if(Number(sessionStorage.getItem("count")) + 2 == player_num)
 					{
 						setPhase("fish win");
-						// extra point
-						let points = Number(sessionStorage.getItem("score"+fish)) + 5;
-						sessionStorage.setItem("score"+fish, points);
 					}
 					else
 					{
@@ -376,7 +373,7 @@ function playLoaded()
 		
 		for(let i=1; i<=player_num; i++)
 		{
-			text += "<b>" + sessionStorage.getItem("player"+i) + "</b>: " + sessionStorage.getItem("score"+i) + "<br>";
+			text += "<b>" + sessionStorage.getItem("player"+i) + "</b>: " + Number(sessionStorage.getItem("score"+i)).toFixedDown(2) + "<br>";
 		}
 		
 		document.getElementById("button").value = "Incomincia un nuovo round";

@@ -373,7 +373,7 @@ function playLoaded()
 		
 		for(let i=1; i<=player_num; i++)
 		{
-			text += "<b>" + sessionStorage.getItem("player"+i) + "</b>: " + Number(sessionStorage.getItem("score"+i)).toFixedDown(2) + "<br>";
+			text += "<b>" + sessionStorage.getItem("player"+i) + "</b>: " + Number(parseFloat(Number(sessionStorage.getItem("score"+i)).toFixed(2))) + "<br>";
 		}
 		
 		document.getElementById("button").value = "Incomincia un nuovo round";

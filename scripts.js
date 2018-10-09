@@ -288,13 +288,13 @@ function playLoaded()
 				{
 					setPhase("fish taken");
 					
-					// each player (not dead, not the fish) gain 2 point
+					// each player (not dead, not the fish) gain 1 point
 					for(let i=1; i<=player_num; i++)
 					{
 						if( sessionStorage.getItem("in"+i) != "n" &&
 							i != fish )
 						{
-							sessionStorage.setItem("score"+i, Number(sessionStorage.getItem("score"+i)) + 2);
+							sessionStorage.setItem("score"+i, Number(sessionStorage.getItem("score"+i)) + 1);
 						}
 					}
 				}
@@ -306,7 +306,7 @@ function playLoaded()
 					sessionStorage.setItem("count", count);
 					
 					// give the fish more points!
-					let points = Number(sessionStorage.getItem("score"+fish)) + 1;
+					let points = Number(sessionStorage.getItem("score"+fish)) + ((10/player_num) * Number(sessionStorage.getItem("count")));
 					sessionStorage.setItem("score"+fish, points);
 					
 					// remove that player
@@ -317,7 +317,7 @@ function playLoaded()
 					{
 						setPhase("fish win");
 						// extra point
-						let points = Number(sessionStorage.getItem("score"+fish)) + 1;
+						let points = Number(sessionStorage.getItem("score"+fish)) + 5;
 						sessionStorage.setItem("score"+fish, points);
 					}
 					else

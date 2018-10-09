@@ -20,8 +20,8 @@ h1 {
 
 input
 {
-	font-size: 5vw;
-	height: 110vw;
+	font-size: 5vmin;
+	height: 110vmin;
 	background-color: rgba(255,0,0,0);
 	border: none;
 	color: red;

@@ -13,19 +13,21 @@
 		<script type="text/javascript" src="scripts.js"></script>
 	</head>
 	
-	<body>
+	<body onload='init()'>
 		<center>
 
 			<hr>
-			<h2>Inserisci nomi giocatori</h2>
-
-			<hr>
-			<h3 id="p_title">Giocatore 1:</h3>
+			<h4>Inserisci giocatori</h4>
+			<div id="name_container"> </div>
+			<br>
 			
-			<input id="p_text" type="text" name="Name Player" value="Giocatore 1">
+			<input id="p_add" type="button" name="add player" value="😎 aggiungi membro 😎" onclick="addMember()">
+			<input id="p_remove" type="button" name="add player" value="Rimuovi membro" onclick="removeMember()">
+			
 			<br><br>
-			
-			<input id="p_button" type="button" value="Va bene" onclick="setName(1)" />
+			<input id="p_button" type="button" value="Va bene" onclick="start()" />
+			<br>
+			<input id="p_button" type="button" value="Indietro" onclick="window.location = 'index.html'" />
 			
 		</center>
 	</body>

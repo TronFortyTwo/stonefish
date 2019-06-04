@@ -7,13 +7,17 @@ function setBackground( nb )
 }
 // ---------------------------------------------------------------------
 // 
-function setPhase( ph )
-{
+function setPhase( ph ){
 	sessionStorage.setItem("phase", ph);
 }
-function getPhase()
-{
+function getPhase(){
 	return sessionStorage.getItem("phase");
+}
+function setPNum(ph){
+	sessionStorage.setItem("player_number", ph);
+}
+function getPNum(){
+	return Number(sessionStorage.getItem("player_number"));
 }
 // ---------------------------------------------------------------------
 // Extend sessionStorage to store objects
@@ -39,8 +43,7 @@ function getChooser(){
 }
 // ---------------------------------------------------------------------
 // Get a random number in a range
-function random(min, max)
-{
+function random(min, max){
     return Math.floor(Math.random()*(max-min+1)+min);
 }
 // ---------------------------------------------------------------------
@@ -60,8 +63,7 @@ String.prototype.shuffle = function () {
 }
 // ---------------------------------------------------------------------
 // subroutine that removes the standard 'Ok, i got it' button
-function removeButton()
-{
+function removeButton(){
 	let old_button = document.getElementById("button");
 	if(old_button)
 	{
@@ -70,8 +72,7 @@ function removeButton()
 }
 // ---------------------------------------------------------------------
 // Get next player after the one given
-function nextPlayer( start )
-{
+function nextPlayer( start ){
 	let next = Number(start);
 	let player_num = Number(sessionStorage.getItem("player_number"));
 	
@@ -87,18 +88,15 @@ function nextPlayer( start )
 }
 // ---------------------------------------------------------------------
 // access turn
-function getTurn()
-{
+function getTurn(){
 	return Number(sessionStorage.getItem("turn"));
 }
-function setTurn( nt )
-{
+function setTurn( nt ){
 	sessionStorage.setItem("turn", nt);
 }
 // ---------------------------------------------------------------------
 // subroutine that update the turn
-function turnStep()
-{
+function turnStep(){
 	let next_turn = nextPlayer(getTurn());
 	
 	setTurn(next_turn);
@@ -106,50 +104,62 @@ function turnStep()
 	return next_turn;
 }
 // ---------------------------------------------------------------------
-// boh
-function setPlayerNames()
-{
+// Start a new game
+function create(){
 	window.location = "playerSetName.html";
 }
-// ---------------------------------------------------------------------
-// Start a new game
-function create( pnum )
-{
+function init(){
 	sessionStorage.clear();
-	
-	sessionStorage.setItem("player_number", pnum);
-	
-	// create all the new players
-	setPlayerNames();
+	setPNum(0);
 }
-
-// ---------------------------------------------------------------------
-// Setting the player name
-function setName( setnum )
-{
-	sessionStorage.setItem("player"+setnum, document.getElementById("p_text").value);
+function addMember(){
 	
-	if(setnum == sessionStorage.getItem("player_number") ) {
-		setGame();
-		
-		window.location = "pass.html";
+	setPNum(1+getPNum());
+	
+	let container = document.getElementById("name_container");
+	let new_field = document.createElement("input");
+	new_field.type = "text";
+	new_field.id = "p_text"+getPNum();
+	new_field.name = "p_text"+getPNum();
+	
+	let nomi = [
+		"Topolino",
+		"Paperino",
+		"Paperoga",
+		"Pippo",
+		"Mafalda",
+		"Gandalf",
+		"Pierino",
+		"Rin Tin Tin",
+		"Pinocchio",
+		"Pollicino"
+	]
+	
+	new_field.value = nomi[random(0,nomi.length-1)];
+	
+	container.appendChild(new_field);
+}
+function removeMember(){
+	
+	if(getPNum() < 4)
 		return;
-	}
-	else
-	{
-		document.getElementById("p_title").innerHTML = "Giocatore " + (setnum+1) + ":";
-		document.getElementById("p_button").onclick = function(){ setName(setnum+1); };
-		document.getElementById("p_text").value = "Giocatore " + (setnum+1);
-	}
+	
+	document.getElementById('p_text'+getPNum()).remove();
+	
+	setPNum(getPNum()-1);
 }
 
 // ---------------------------------------------------------------------
 // set game
-function setGame()
-{
-	player_num = sessionStorage.getItem("player_number");
+function start(){
+	player_num = getPNum();
 	
-	// assign what player is the Pesce Pietra
+	for(i=1; i<=player_num; i++)
+	{
+		console.log(i);
+		sessionStorage.setItem("player"+i, document.getElementById("p_text"+i).value);
+	}
+	// assign what player is the stone fish
 	var fish = random(1, player_num);
 	
 	setFish(fish);
@@ -186,12 +196,13 @@ function setGame()
 	
 	// turn counter
 	sessionStorage.setItem("count", "0");
+	
+	window.location = "pass.html";
 }
 
 // ---------------------------------------------------------------------
 // Make the one who has the phone in the hand pass it
-function passLoaded()
-{
+function passLoaded(){
 	document.getElementById("title").innerHTML = "Turno di " + sessionStorage.getItem("player" + getTurn());
 	
 	if( sessionStorage.getItem("phase") === "score" ||
@@ -201,8 +212,7 @@ function passLoaded()
 
 // ---------------------------------------------------------------------
 // This organize the play page just after has loaded
-function playLoaded()
-{
+function playLoaded(){
 	// frequently used stuff
 	var phase = getPhase();
 	var turn = getTurn();
@@ -404,8 +414,7 @@ function playLoaded()
 
 // ---------------------------------------------------------------------
 // This handle the actions at the end of a turn
-function postPlay()
-{
+function postPlay(){
 	// this may be the only thing that actually make sense here?
 	if(sessionStorage.getItem("phase") != "end")
 		// continue to play

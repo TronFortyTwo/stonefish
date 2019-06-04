@@ -260,7 +260,8 @@ function playLoaded(){
 		}
 		else
 		{
-			document.getElementById("top_title").innerHTML = "La parola è " + sessionStorage.getItem("word") + "</b>";
+			document.getElementById("top_title").innerHTML = "La parola è:";
+			document.getElementById("comment").innerHTML = sessionStorage.getItem("word");
 		}
 		
 		turnStep();
@@ -356,7 +357,7 @@ function playLoaded(){
 	else if(phase === "fish win")
 	{
 		document.getElementById("top_title").innerHTML = "IL PESCE HA VINTO";
-		document.getElementById("button").value = "Punteggi";
+		document.getElementById("button").value = "Continua";
 		setPhase("score");
 	}
 	// -----------------------------------------------------------------
@@ -370,7 +371,7 @@ function playLoaded(){
 	else if(phase == "fish taken")
 	{
 		document.getElementById("top_title").innerHTML = "PESCE CATTURATO";
-		document.getElementById("button").value = "Punteggi";
+		document.getElementById("button").value = "Continua";
 		setPhase("score");
 	}
 	// -----------------------------------------------------------------
@@ -381,14 +382,46 @@ function playLoaded(){
 		let text = "<b>" + sessionStorage.getItem("player"+fish) + "</b> era il pesce!<br>";
 		text += "<br>PUNTEGGIO:<br>";
 		
+		let put = new Array();
+		let putn = 0;
 		for(let i=1; i<=player_num; i++)
+			put[i] = false;
+		
+		while(putn < player_num)
 		{
-			text += "<b>" + sessionStorage.getItem("player"+i) + "</b>: " + Number(parseFloat(Number(sessionStorage.getItem("score"+i)).toFixed(2))) + "<br>";
+			let max = -1;
+			let maxname = "";
+			let maxi = 0;
+			
+			for(let i=1; i<=player_num; i++)
+			{
+				if(put[i] == true)
+					continue;
+				if(sessionStorage.getItem("score"+i) > max)
+				{
+					max = sessionStorage.getItem("score"+i);
+					maxname = sessionStorage.getItem("player"+i);
+					maxi = i;
+				}
+			}
+			
+			putn++;
+			put[maxi] = true;
+			
+			if(putn > Math.min(3,player_num-2))
+				text += "<b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "<br>";
+			else
+				text += "<font color='green'> <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "</font><br>";
 		}
 		
 		document.getElementById("button").value = "Incomincia un nuovo round";
 		
 		setPhase("word");
+		// all the players are in
+		for(let i=0; i<=player_num; i++) {
+			sessionStorage.setItem("in"+i, "y");
+		}
+		
 		setChooser( nextPlayer( getChooser()));
 		setTurn(getChooser());
 		sessionStorage.setItem("count", "0");
@@ -398,11 +431,6 @@ function playLoaded(){
 			nfish = random(1, player_num);
 		} while( nfish == getChooser() )
 		setFish(nfish);
-		
-		// all the players are in
-		for(let i=0; i<=player_num; i++) {
-			sessionStorage.setItem("in"+i, "y");
-		}
 		
 		document.getElementById("comment").innerHTML = text;
 	}

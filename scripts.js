@@ -1,7 +1,6 @@
 // ---------------------------------------------------------------------
 // Set background image
-function setBackground( nb )
-{
+function setBackground( nb ){
 	var root = document.getElementsByTagName('html')[0];
 	root.style.backgroundImage = 'url(' + nb + ')';
 }
@@ -104,10 +103,6 @@ function turnStep(){
 	return next_turn;
 }
 // ---------------------------------------------------------------------
-// Start a new game
-function create(){
-	window.location = "playerSetName.html";
-}
 function init(){
 	sessionStorage.clear();
 	setPNum(0);
@@ -317,7 +312,7 @@ function playLoaded(){
 					sessionStorage.setItem("count", count);
 					
 					// give the fish more points!
-					let points = Number(sessionStorage.getItem("score"+fish)) + ((9/player_num) * Number(sessionStorage.getItem("count")));
+					let points = Number(sessionStorage.getItem("score"+fish)) + ( 7 / (player_num - (count/1.5))  );
 					sessionStorage.setItem("score"+fish, points);
 					
 					// remove that player
@@ -377,10 +372,10 @@ function playLoaded(){
 	// -----------------------------------------------------------------
 	else if(phase === "score")
 	{
-		document.getElementById("top_title").innerHTML = "PUNTEGGIO";
+		document.getElementById("top_title").innerHTML = "CLASSIFICA";
 		
 		let text = "<b>" + sessionStorage.getItem("player"+fish) + "</b> era il pesce!<br>";
-		text += "<br>PUNTEGGIO:<br>";
+		text += "<br><br>";
 		
 		let put = new Array();
 		let putn = 0;
@@ -409,9 +404,9 @@ function playLoaded(){
 			put[maxi] = true;
 			
 			if(putn > Math.min(3,player_num-2))
-				text += "<b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "<br>";
+				text += "(" + putn + ") <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "<br>";
 			else
-				text += "<font color='green'> <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "</font><br>";
+				text += "<font color='green'> (" + putn + ") <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "</font><br>";
 		}
 		
 		document.getElementById("button").value = "Incomincia un nuovo round";

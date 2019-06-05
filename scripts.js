@@ -276,7 +276,7 @@ function playLoaded(){
 			starting_player = nextPlayer(starting_player);
 		}
 		
-		let text = "Ora, partendo da <b>" + sessionStorage.getItem("player"+starting_player) + "</b>, ogni giocatore dirà una parola che abbia correlazione con la parola scelta all'inizio. Avrete un pochino di tempo per pensare alla parola, ma poi le dovrete dire spediti una dietro l'altra<br>";
+		let text = "Ora, partendo da <font color='red'>" + sessionStorage.getItem("player"+starting_player) + "</font>, ogni giocatore dirà una parola che abbia correlazione con la parola scelta all'inizio. Avrete un pochino di tempo per pensare alla parola, ma poi le dovrete dire spediti una dietro l'altra<br>";
 		text += "esempio: <b>Treno -> Rotaia</b><br>";
 		text += "<br>Noti qualcosa di sospetto in qualcuno? Che giocatore è stato scelto?<br>";
 		
@@ -404,9 +404,9 @@ function playLoaded(){
 			put[maxi] = true;
 			
 			if(putn > Math.min(3,player_num-2))
-				text += "(" + putn + ") <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "<br>";
+				text += "(" + putn + ") <b>" + maxname + "</b>: " + 10*Number(parseFloat(Number(max).toFixed(1))) + "<br>";
 			else
-				text += "<font color='green'> (" + putn + ") <b>" + maxname + "</b>: " + Number(parseFloat(Number(max).toFixed(2))) + "</font><br>";
+				text += "<font color='green'> (" + putn + ") <b>" + maxname + "</b>: " + 10*Number(parseFloat(Number(max).toFixed(1))) + "</font><br>";
 		}
 		
 		document.getElementById("button").value = "Incomincia un nuovo round";

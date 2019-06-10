@@ -72,6 +72,7 @@ function removeButton(){
 // ---------------------------------------------------------------------
 // Get next player after the one given
 function nextPlayer( start ){
+	
 	let next = Number(start);
 	let player_num = Number(sessionStorage.getItem("player_number"));
 	
@@ -84,6 +85,18 @@ function nextPlayer( start ){
 	while( sessionStorage.getItem("in"+next) == "n" );
 	
 	return next;
+}
+function advancePlayer(astart, asteps) {
+	pos = Number(astart);
+	steps = Number(asteps);
+	
+	while(steps > 0)
+	{
+		pos = nextPlayer(pos);
+		--steps;
+	}
+	
+	return pos;
 }
 // ---------------------------------------------------------------------
 // access turn
@@ -151,9 +164,11 @@ function start(){
 	
 	for(i=1; i<=player_num; i++)
 	{
-		console.log(i);
 		sessionStorage.setItem("player"+i, document.getElementById("p_text"+i).value);
+		sessionStorage.setItem("in"+i, "y");
+		sessionStorage.setItem("score"+i, "0");
 	}
+	
 	// assign what player is the stone fish
 	var fish = random(1, player_num);
 	
@@ -176,18 +191,6 @@ function start(){
 	
 	// at the start of the game, just do a turn showing each one role
 	setPhase("word");
-	
-	// all the players are in
-	for(let i=0; i<=player_num; i++)
-	{
-		sessionStorage.setItem("in"+i, "y");
-	}
-	
-	// score
-	for(let i=0; i<=player_num; i++)
-	{
-		sessionStorage.setItem("score"+i, "0");
-	}
 	
 	// turn counter
 	sessionStorage.setItem("count", "0");
@@ -270,20 +273,24 @@ function playLoaded(){
 	{
 		document.getElementById("top_title").innerHTML = "METTI IL TELEFONO AL CENTRO</b>";
 		
-		let starting_player = nextPlayer(getChooser() + Number(sessionStorage.getItem("count")));
+		let starting_player = advancePlayer(getChooser(), 1+Number(sessionStorage.getItem("count")));
 		
-		while( starting_player == getChooser() ) {
-			starting_player = nextPlayer(starting_player);
-		}
+		console.log("cp: " + getChooser());
+		console.log("co: " + sessionStorage.getItem("count"));
+		console.log("sp: " + starting_player);
 		
-		let text = "Ora, partendo da <font color='red'>" + sessionStorage.getItem("player"+starting_player) + "</font>, ogni giocatore dirà una parola che abbia correlazione con la parola scelta all'inizio. Avrete un pochino di tempo per pensare alla parola, ma poi le dovrete dire spediti una dietro l'altra<br>";
+		if(starting_player == getChooser())
+			 starting_player = nextPlayer(starting_player);
+		
+		console.log("sp: " + starting_player);
+		
+		let text = "Ora, partendo da <b>" + sessionStorage.getItem("player"+starting_player) + "</b>, ogni giocatore dirà una parola che abbia correlazione con la parola scelta all'inizio. Avrete un pochino di tempo per pensare alla parola, ma poi le dovrete dire spediti una dietro l'altra<br>";
 		text += "esempio: <b>Treno -> Rotaia</b><br>";
-		text += "<br>Noti qualcosa di sospetto in qualcuno? Che giocatore è stato scelto?<br>";
-		
-		let root = document.getElementById("button").parentNode;
-		removeButton();
+		text += "<br>Noti qualcosa di sospetto in qualcuno? Per votazione scegliete un giocatore. Anche chi ha scelto la parola può votare<br>";
 		
 		document.getElementById("comment").innerHTML = text;
+		
+		removeButton();
 		
 		// callback
 		function setButton(button, i)
@@ -334,6 +341,8 @@ function playLoaded(){
 		}
 		
 		// create buttons
+		let root = document.getElementById("comment").parentNode;
+		
 		for(let i=1; i <= player_num; i++)
 		{
 			if (i != chooser &&

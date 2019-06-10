@@ -358,7 +358,7 @@ function playLoaded(){
 	// -----------------------------------------------------------------
 	else if(phase === "fish passed")
 	{
-		document.getElementById("top_title").innerHTML = "IL PESCE LA HA FATTA FRANCA";
+		document.getElementById("top_title").innerHTML = "IL PESCE L'HA FATTA FRANCA";
 		document.getElementById("button").value = "Continua";
 		setPhase("word");
 	}

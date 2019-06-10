@@ -390,11 +390,11 @@ function playLoaded(){
 			
 			for(let i=1; i<=player_num; i++)
 			{
-				if(put[i] == true)
-					continue;
-				if(sessionStorage.getItem("score"+i) > max)
+				if(put[i] == true) continue;
+				
+				if(Number(sessionStorage.getItem("score"+i)) > max)
 				{
-					max = sessionStorage.getItem("score"+i);
+					max = Number(sessionStorage.getItem("score"+i));
 					maxname = sessionStorage.getItem("player"+i);
 					maxi = i;
 				}
@@ -417,7 +417,7 @@ function playLoaded(){
 			sessionStorage.setItem("in"+i, "y");
 		}
 		
-		setChooser( nextPlayer( getChooser()));
+		setChooser(nextPlayer( getChooser()));
 		setTurn(getChooser());
 		sessionStorage.setItem("count", "0");
 		

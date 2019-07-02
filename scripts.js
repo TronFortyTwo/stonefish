@@ -273,14 +273,13 @@ function playLoaded(){
 	{
 		document.getElementById("top_title").innerHTML = "METTI IL TELEFONO AL CENTRO</b>";
 		
-		let starting_player = advancePlayer(getChooser(), 1+Number(sessionStorage.getItem("count")));
+		let starting_player = 0;
 		
-		console.log("cp: " + getChooser());
-		console.log("co: " + sessionStorage.getItem("count"));
-		console.log("sp: " + starting_player);
-		
-		if(starting_player == getChooser())
-			 starting_player = nextPlayer(starting_player);
+		do
+		{
+			starting_player = advancePlayer(getChooser(), random(1,100)+Number(sessionStorage.getItem("count")));
+		}
+		while (starting_player == getChooser());
 		
 		console.log("sp: " + starting_player);
 		

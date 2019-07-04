@@ -28,6 +28,12 @@ Storage.prototype.getObject = function(key) {
 }
 // ---------------------------------------------------------------------
 // abstract stuff
+function getStone(){
+	return Number(sessionStorage.getItem("stone"));
+}
+function setStone(np){
+	sessionStorage.setItem("stone", np);
+}
 function getFish(){
 	return Number(sessionStorage.getItem("fish"));
 }
@@ -119,6 +125,11 @@ function turnStep(){
 function init(){
 	sessionStorage.clear();
 	setPNum(0);
+	
+	addMember();
+	addMember();
+	addMember();
+	addMember();
 }
 function addMember(){
 	
@@ -129,27 +140,13 @@ function addMember(){
 	new_field.type = "text";
 	new_field.id = "p_text"+getPNum();
 	new_field.name = "p_text"+getPNum();
-	
-	let nomi = [
-		"Topolino",
-		"Paperino",
-		"Paperoga",
-		"Pippo",
-		"Mafalda",
-		"Gandalf",
-		"Pierino",
-		"Rin Tin Tin",
-		"Pinocchio",
-		"Pollicino"
-	]
-	
-	new_field.value = nomi[random(0,nomi.length-1)];
+	new_field.value = "";
 	
 	container.appendChild(new_field);
 }
 function removeMember(){
 	
-	if(getPNum() < 4)
+	if(getPNum() <= 4)
 		return;
 	
 	document.getElementById('p_text'+getPNum()).remove();
@@ -160,31 +157,43 @@ function removeMember(){
 // ---------------------------------------------------------------------
 // set game
 function start(){
-	player_num = getPNum();
 	
-	for(i=1; i<=player_num; i++)
+	let double = document.getElementById("p_double").checked;
+	sessionStorage.setItem("double", double);
+	
+	// all the players
+	for(i=1; i<=getPNum(); i++)
 	{
 		sessionStorage.setItem("player"+i, document.getElementById("p_text"+i).value);
 		sessionStorage.setItem("in"+i, "y");
 		sessionStorage.setItem("score"+i, "0");
 	}
 	
-	// assign what player is the stone fish
-	var fish = random(1, player_num);
-	
+	// assign what player is the fish
+	let fish = random(1, getPNum());
 	setFish(fish);
 	
-	console.log("The fish is " + fish);
-	
+	// assign what player is the stone
+	let stone = -1;
+	if(double)
+	{
+		do{
+			stone = random(1,getPNum());
+		} while(fish == stone);
+	}
+	setStone(stone);
 	// now choose who now is gonna choose the word
 	var chooser = 0;
 	do {
-		chooser = random(1, player_num);
-	} while( fish == chooser );
+		chooser = random(1, getPNum());
+	} while( (fish == chooser) || (stone == chooser) );
 	
 	setChooser(chooser);
 	
+	console.log("Double: " + double);
 	console.log("The chooser is " + chooser);
+	console.log("The fish is " + fish);
+	console.log("The stone is " + stone);
 	
 	// The first president is also the first to play
 	setTurn(chooser);
@@ -201,11 +210,11 @@ function start(){
 // ---------------------------------------------------------------------
 // Make the one who has the phone in the hand pass it
 function passLoaded(){
-	document.getElementById("title").innerHTML = "Turno di " + sessionStorage.getItem("player" + getTurn());
-	
 	if( sessionStorage.getItem("phase") === "score" ||
 		sessionStorage.getItem("phase") === "talk" )
 		window.location = "play.html";
+	
+	document.getElementById("title").innerHTML = "Turno di " + sessionStorage.getItem("player" + getTurn());
 }
 
 // ---------------------------------------------------------------------
@@ -215,6 +224,8 @@ function playLoaded(){
 	var phase = getPhase();
 	var turn = getTurn();
 	var fish = getFish();
+	var stone = getStone();
+	var double = (stone > 0);
 	var chooser = getChooser();
 	var player_num = sessionStorage.getItem("player_number");
 	
@@ -237,8 +248,13 @@ function playLoaded(){
 		bok.value = "OK";
 		bok.onclick = function()
 		{
-			sessionStorage.setItem("word", document.getElementById("word").value);
-			window.location = "pass.html";
+			let chosen_word = document.getElementById("word").value;
+			
+			if(chosen_word != "")
+			{
+				sessionStorage.setItem("word", chosen_word);
+				window.location = "pass.html";
+			}
 		};
 		
 		root.appendChild(tin);
@@ -254,7 +270,21 @@ function playLoaded(){
 	{
 		if( fish == getTurn() )
 		{
-			document.getElementById("top_title").innerHTML = "<b>Tu sei il Pesce Pietra!</b>";
+			if(double)
+			{
+				document.getElementById("top_title").innerHTML = "<b>Tu sei il Pesce!</b>";
+				document.getElementById("comment").innerHTML = "Il tuo amico Pietra è <font color='blue'>" + sessionStorage.getItem("player" + stone) + "</font>";
+			}
+			else
+			{
+				document.getElementById("top_title").innerHTML = "<b>Tu sei il Pesce Pietra!</b>";
+				document.getElementById("comment").innerHTML = "Mimetizzati!";
+			}
+		}
+		else if( stone == getTurn() )
+		{
+			document.getElementById("top_title").innerHTML = "<b>Tu sei la Pietra!</b>";
+			document.getElementById("comment").innerHTML = "Il tuo amico Pesce è <font color='blue'>" + sessionStorage.getItem("player" + fish) + "</font>";
 		}
 		else
 		{
@@ -277,15 +307,13 @@ function playLoaded(){
 		
 		do
 		{
-			starting_player = advancePlayer(getChooser(), random(1,100)+Number(sessionStorage.getItem("count")));
+			starting_player = advancePlayer(getChooser(), random(1,64)+Number(sessionStorage.getItem("count")));
 		}
 		while (starting_player == getChooser());
 		
 		console.log("sp: " + starting_player);
 		
-		let text = "Ora, partendo da <b>" + sessionStorage.getItem("player"+starting_player) + "</b>, ogni giocatore dirà una parola che abbia correlazione con la parola scelta all'inizio. Avrete un pochino di tempo per pensare alla parola, ma poi le dovrete dire spediti una dietro l'altra<br>";
-		text += "esempio: <b>Treno -> Rotaia</b><br>";
-		text += "<br>Noti qualcosa di sospetto in qualcuno? Per votazione scegliete un giocatore. Anche chi ha scelto la parola può votare<br>";
+		let text = "Ora, partendo da <b>" + sessionStorage.getItem("player"+starting_player) + "</b>, Ogni giocatore dirà una parola che abbia correlazione con la parola scelta da " + sessionStorage.getItem("player"+getChooser()) + ". Penserete la parola, poi dovrete dire le parole veloci una dietro l'altra<br>Se sei il pesce pietra, mimetizzati!";
 		
 		document.getElementById("comment").innerHTML = text;
 		
@@ -296,15 +324,20 @@ function playLoaded(){
 		{
 			button.onclick = function()
 			{
-				if(fish == i)
+				if
+				(
+					((fish == i) && (!double)) ||
+					(double && ( (i == fish && sessionStorage.getItem("in"+stone) == 'n' ) || (i == stone && sessionStorage.getItem("in"+fish) == 'n') ))
+				)
 				{
 					setPhase("fish taken");
 					
-					// each player (not dead, not the fish) gain 1 point
+					// each player (not dead, not the fish, not the stone) gain 1 point
 					for(let i=1; i<=player_num; i++)
 					{
 						if( sessionStorage.getItem("in"+i) != "n" &&
-							i != fish )
+							i != fish &&
+							i != stone )
 						{
 							sessionStorage.setItem("score"+i, Number(sessionStorage.getItem("score"+i)) + 1);
 						}
@@ -318,14 +351,18 @@ function playLoaded(){
 					sessionStorage.setItem("count", count);
 					
 					// give the fish more points!
-					let points = Number(sessionStorage.getItem("score"+fish)) + ( 7 / (player_num - (count/1.5))  );
-					sessionStorage.setItem("score"+fish, points);
+					let points = ( 7 / (player_num - (count/1.5)) );
+					sessionStorage.setItem("score"+fish, Number(sessionStorage.getItem("score"+fish)) + points);
+					
+					// give the stone more points
+					if(double)
+						sessionStorage.setItem("score"+stone, Number(sessionStorage.getItem("score"+stone)) + points);
 					
 					// remove that player
 					sessionStorage.setItem("in"+i, "n");
 					
 					// if the fish win
-					if(Number(sessionStorage.getItem("count")) + 2 == player_num)
+					if(Number(sessionStorage.getItem("count")) + 3 == player_num)
 					{
 						setPhase("fish win");
 					}
@@ -359,22 +396,28 @@ function playLoaded(){
 	// -----------------------------------------------------------------
 	else if(phase === "fish win")
 	{
-		document.getElementById("top_title").innerHTML = "IL PESCE HA VINTO";
-		document.getElementById("button").value = "Continua";
+		if(double)
+			document.getElementById("top_title").innerHTML = "IL PESCE E LA PIETRA HANNO VINTO";
+		else
+			document.getElementById("top_title").innerHTML = "IL PESCE PIETRA HA VINTO";
+		document.getElementById("button").value = "Classifica";
 		setPhase("score");
 	}
 	// -----------------------------------------------------------------
 	else if(phase === "fish passed")
 	{
-		document.getElementById("top_title").innerHTML = "IL PESCE L'HA FATTA FRANCA";
-		document.getElementById("button").value = "Continua";
+		if(double)
+			document.getElementById("top_title").innerHTML = "IL PESCE E/O LA PIETRA SONO ANCORA IN GIOCO";
+		else
+			document.getElementById("top_title").innerHTML = "IL PESCE PIETRA L'HA FATTA FRANCA";
+		document.getElementById("button").value = "Nuova Parola";
 		setPhase("word");
 	}
 	// -----------------------------------------------------------------
 	else if(phase == "fish taken")
 	{
 		document.getElementById("top_title").innerHTML = "PESCE CATTURATO";
-		document.getElementById("button").value = "Continua";
+		document.getElementById("button").value = "Classifica";
 		setPhase("score");
 	}
 	// -----------------------------------------------------------------
@@ -382,7 +425,16 @@ function playLoaded(){
 	{
 		document.getElementById("top_title").innerHTML = "CLASSIFICA";
 		
-		let text = "<b>" + sessionStorage.getItem("player"+fish) + "</b> era il pesce!<br>";
+		let text = '';
+		
+		if(double)
+		{
+			text += "<b>" + sessionStorage.getItem("player"+fish) + "</b> era il Pesce!<br>";
+			text += "<b>" + sessionStorage.getItem("player"+stone) + "</b> era la Pietra!<br>";
+		}
+		else
+			text += "<b>" + sessionStorage.getItem("player"+fish) + "</b> era il Pesce Pietra!<br>";
+		
 		text += "<br><br>";
 		
 		let put = new Array();
@@ -417,7 +469,7 @@ function playLoaded(){
 				text += "<font color='green'> (" + putn + ") <b>" + maxname + "</b>: " + 10*Number(parseFloat(Number(max).toFixed(1))) + "</font><br>";
 		}
 		
-		document.getElementById("button").value = "Incomincia un nuovo round";
+		document.getElementById("button").value = "Nuovo Round";
 		
 		setPhase("word");
 		// all the players are in
@@ -429,11 +481,27 @@ function playLoaded(){
 		setTurn(getChooser());
 		sessionStorage.setItem("count", "0");
 		
+		// set new fish
 		let nfish = 0;
-		do { 
+		do {
 			nfish = random(1, player_num);
 		} while( nfish == getChooser() )
 		setFish(nfish);
+		
+		// assign what player is the stone
+		let nstone = -1;
+		if(double)
+		{
+			do{
+				nstone = random(1,getPNum());
+			} while((nfish == nstone) || (nstone == getChooser()));
+		}
+		setStone(nstone);
+		
+		console.log("Double: " + double);
+		console.log("The chooser is " + getChooser());
+		console.log("The fish is " + getFish());
+		console.log("The stone is " + getStone());
 		
 		document.getElementById("comment").innerHTML = text;
 	}

@@ -17,12 +17,18 @@
 		<center>
 
 			<hr>
-			<h4>Inserisci giocatori</h4>
+			<h3>Inserisci giocatori</h3>
 			<div id="name_container"> </div>
 			<br>
 			
-			<input id="p_add" type="button" name="add player" value="😎 aggiungi membro 😎" onclick="addMember()">
-			<input id="p_remove" type="button" name="add player" value="Rimuovi membro" onclick="removeMember()">
+			<input id="p_add" type="button" name="add player" value="Aggiungi Giocatore" onclick="addMember()">
+			<input id="p_remove" type="button" name="remove player" value="Rimuovi Giocatore" onclick="removeMember()">
+			<br>
+			<h3>Doppio Pesce Pietra: </h3>
+			<label class="switch">
+				<input type="checkbox" id="p_double">
+				<span class="slider round"></span>
+			</label>
 			
 			<br><br>
 			<input id="p_button" type="button" value="Incomincia" onclick="start()" />
